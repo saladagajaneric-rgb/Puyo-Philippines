@@ -23,3 +23,13 @@ export interface HousingInsight {
   title: string;
   content: string;
 }
+
+export interface Inquiry {
+  id: string;
+  created_at: string;
+  name: string;
+  email: string;
+  message: string;
+  property_id?: string;
+  status: 'new' | 'read' | 'replied';
+}

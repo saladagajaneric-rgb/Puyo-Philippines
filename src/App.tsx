@@ -23,12 +23,10 @@ export default function App() {
         {/* Background Accent Gradient for extra depth */}
         <div className="fixed inset-0 bg-radial-[at_50%_50%] from-jade-500/5 to-transparent pointer-events-none" />
 
-        <Navbar />
-
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/sell" element={<SellProperty />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<><Navbar /><LandingPage /></>} />
+          <Route path="/sell" element={<><Navbar /><SellProperty /></>} />
+          <Route path="/login" element={<><Navbar /><Login /></>} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
 

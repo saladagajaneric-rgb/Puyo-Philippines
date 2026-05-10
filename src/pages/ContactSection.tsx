@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function ContactSection() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -10,7 +11,8 @@ export default function ContactSection() {
     e.preventDefault();
     setStatus('loading');
 
-    const formData = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
     
     // Security: Honeypot check
     if (formData.get('botcheck')) {
@@ -18,10 +20,29 @@ export default function ContactSection() {
       return;
     }
 
-    // Using Web3Forms - ce651c33-0f62-41e6-93e1-6507969ab8ab
-    formData.append('access_key', 'ce651c33-0f62-41e6-93e1-6507969ab8ab'); 
+    const first_name = formData.get('first_name') as string;
+    const last_name = formData.get('last_name') as string;
+    const email = formData.get('email') as string;
+    const phone = formData.get('phone') as string;
+    const msg = formData.get('message') as string;
+    const inquire_as = formData.get('inquire_as') as string;
+    const inquiry_type = formData.get('inquiry_type') as string;
 
     try {
+      // 1. Save to Supabase (Admin Mailbox)
+      const { error: supabaseError } = await supabase
+        .from('inquiries')
+        .insert([{
+          name: `${first_name} ${last_name}`,
+          email: email,
+          message: `[${inquire_as} - ${inquiry_type}] Phone: ${phone}\n\n${msg}`,
+          status: 'new'
+        }]);
+
+      if (supabaseError) throw supabaseError;
+
+      // 2. Send to Web3Forms (Email Notification)
+      formData.append('access_key', 'ce651c33-0f62-41e6-93e1-6507969ab8ab'); 
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData
@@ -31,15 +52,16 @@ export default function ContactSection() {
 
       if (data.success) {
         setStatus('success');
-        setMessage('Thank you! Your inquiry has been sent successfully. We will get back to you soon.');
-        (e.target as HTMLFormElement).reset();
+        setMessage('Thank you! Your inquiry has been sent to our team and saved in our records.');
+        formElement.reset();
       } else {
         setStatus('error');
-        setMessage(data.message || 'Something went wrong. Please try again later.');
+        setMessage(data.message || 'Email delivery failed, but your inquiry was saved in our admin portal.');
       }
     } catch (err) {
+      console.error('Contact error:', err);
       setStatus('error');
-      setMessage('Failed to connect to the server. Please check your internet connection.');
+      setMessage('Failed to send inquiry. Please try again later.');
     }
   };
 
