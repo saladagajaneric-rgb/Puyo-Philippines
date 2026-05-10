@@ -65,6 +65,7 @@ export default function Footer() {
               <li><a href="/#about" className="flex items-center gap-3 hover:text-white hover:translate-x-2 transition-all duration-300"><ArrowRight size={14} className="text-emerald-500" /> About Us</a></li>
               <li><a href="/#properties" className="flex items-center gap-3 hover:text-white hover:translate-x-2 transition-all duration-300"><ArrowRight size={14} className="text-emerald-500" /> Properties</a></li>
               <li><Link to="/sell" className="flex items-center gap-3 hover:text-white hover:translate-x-2 transition-all duration-300"><ArrowRight size={14} className="text-emerald-500" /> Sell Your Property</Link></li>
+              <li><Link to="/login" className="flex items-center gap-3 hover:text-white hover:translate-x-2 transition-all duration-300 opacity-50 hover:opacity-100"><ArrowRight size={14} className="text-emerald-500" /> Admin Portal</Link></li>
             </ul>
           </div>
         </div>
